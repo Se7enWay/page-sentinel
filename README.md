@@ -72,8 +72,8 @@ cp .env.example .env
 Set your notification credentials in `.env`:
 
 ```ini
-TARGET_URL=http://fsr.ac.ma/DOC/Preselections/Cycle_Masters/LISTES_CONCOURS_ECRIT/
-CHECK_INTERVAL=30
+TARGET_URL=https://example.university.edu/admissions/results/
+CHECK_INTERVAL=60
 
 # ntfy.sh (Mobile push alarm)
 NTFY_ENABLED=true

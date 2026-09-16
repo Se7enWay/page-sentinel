@@ -26,7 +26,7 @@ APP_USER_AGENT: str = f"{APP_NAME}/{APP_VERSION} (+https://github.com/Se7enWay/p
 # Target configuration
 TARGET_URL: str = os.getenv(
     "TARGET_URL",
-    "http://fsr.ac.ma/DOC/Preselections/Cycle_Masters/LISTES_CONCOURS_ECRIT/",
+    "https://example.university.edu/admissions/results/",
 ).strip()
 
 # Polling interval (enforce a safe lower bound to prevent unintentional DoS)

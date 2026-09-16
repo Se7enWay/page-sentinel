@@ -24,7 +24,7 @@ SAMPLE_APACHE_HTML = """
 
 
 def test_parse_directory_listing_extracts_pdfs_only():
-    base_url = "http://fsr.ac.ma/DOC/Preselections/Cycle_Masters/LISTES_CONCOURS_ECRIT/"
+    base_url = "https://example.university.edu/admissions/results/"
     results = parse_directory_listing(SAMPLE_APACHE_HTML, base_url)
 
     filenames = [item.filename for item in results]
@@ -35,14 +35,14 @@ def test_parse_directory_listing_extracts_pdfs_only():
 
     # Verify absolute URL construction
     item_map = {item.filename: item.url for item in results}
-    assert item_map["Master_IT_TAM.pdf"] == "http://fsr.ac.ma/DOC/Preselections/Cycle_Masters/LISTES_CONCOURS_ECRIT/Master_IT_TAM.pdf"
+    assert item_map["Master_IT_TAM.pdf"] == "https://example.university.edu/admissions/results/Master_IT_TAM.pdf"
 
 
 def test_parse_directory_listing_handles_root_relative_paths():
-    html = '<a href="/DOC/files/Master_TEST.pdf">Test</a>'
-    base = "http://fsr.ac.ma/DOC/Preselections/"
+    html = '<a href="/files/Master_TEST.pdf">Test</a>'
+    base = "https://example.university.edu/admissions/"
     results = parse_directory_listing(html, base)
 
     assert len(results) == 1
     assert results[0].filename == "Master_TEST.pdf"
-    assert results[0].url == "http://fsr.ac.ma/DOC/files/Master_TEST.pdf"
+    assert results[0].url == "https://example.university.edu/files/Master_TEST.pdf"

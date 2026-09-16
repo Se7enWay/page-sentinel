@@ -9,8 +9,8 @@ from notifiers.ntfy import send
 def test_ntfy_sends_urgent_with_click_url():
     """Verify ntfy JSON payload includes urgent priority and click URL."""
     files = [
-        FileItem(filename="Master_IT.pdf", url="http://fsr.ac.ma/Master_IT.pdf"),
-        FileItem(filename="Master_CS.pdf", url="http://fsr.ac.ma/Master_CS.pdf"),
+        FileItem(filename="Master_IT.pdf", url="https://example.university.edu/Master_IT.pdf"),
+        FileItem(filename="Master_CS.pdf", url="https://example.university.edu/Master_CS.pdf"),
     ]
 
     with patch("notifiers.ntfy.get_http_session") as mock_get_session:
@@ -26,7 +26,7 @@ def test_ntfy_sends_urgent_with_click_url():
         payload = call_kwargs["json"]
 
         assert payload["priority"] == 4
-        assert payload["click"] == "http://fsr.ac.ma/Master_IT.pdf"
+        assert payload["click"] == "https://example.university.edu/Master_IT.pdf"
         assert payload["title"] == "🚨 New Files!"
         assert "Master_IT.pdf" in payload["message"]
 
