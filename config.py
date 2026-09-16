@@ -26,7 +26,7 @@ APP_USER_AGENT: str = f"{APP_NAME}/{APP_VERSION} (+https://github.com/Se7enWay/p
 # Target configuration
 TARGET_URL: str = os.getenv(
     "TARGET_URL",
-    "https://example.university.edu/admissions/results/",
+    "http://fsr.ac.ma/DOC/Preselections/Cycle_Masters/LISTES_CONCOURS_ECRIT/",
 ).strip()
 
 # Polling interval (enforce a safe lower bound to prevent unintentional DoS)
@@ -37,7 +37,6 @@ CHECK_INTERVAL: int = max(5, raw_interval)
 NTFY_ENABLED: bool = os.getenv("NTFY_ENABLED", "true").lower() in ("true", "1", "yes")
 NTFY_TOPIC: str = os.getenv("NTFY_TOPIC", "page-sentinel").strip()
 NTFY_SERVER: str = os.getenv("NTFY_SERVER", "https://ntfy.sh").rstrip("/")
-NTFY_PRIORITY: int = int(os.getenv("NTFY_PRIORITY", "4"))
 
 DISCORD_ENABLED: bool = os.getenv("DISCORD_ENABLED", "true").lower() in ("true", "1", "yes")
 DISCORD_WEBHOOK_URL: str = os.getenv("DISCORD_WEBHOOK_URL", "").strip()
