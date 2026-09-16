@@ -5,7 +5,8 @@
 state.json
 state.json.bak
 demo_state.json
-*state*.json
+*state*.json*
+*.bak
 
 # Python cache
 __pycache__/
