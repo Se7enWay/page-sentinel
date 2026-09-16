@@ -11,18 +11,25 @@ from monitor import FileItem
 logger = logging.getLogger("page_sentinel.notifiers")
 
 
+class _NotifierEntry(NamedTuple):
+    """Internal registry entry for a notification channel."""
+    name: str
+    is_external: bool
+    send_fn: Callable[[str, str, list[FileItem]], None]
+
+
 class DispatchResult(NamedTuple):
     succeeded: list[str]
     failed: list[str]
+    external_succeeded: list[str]
 
     @property
     def has_external_success(self) -> bool:
-        """Return True if at least one remote channel (non-console) delivered successfully."""
-        return any(name != "console" for name in self.succeeded)
+        """Return True if at least one remote channel delivered successfully."""
+        return len(self.external_succeeded) > 0
 
 
-# Registered notifiers: (name, is_external, callable)
-_registry: list[tuple[str, bool, Callable[[str, str, list[FileItem]], None]]] = []
+_registry: list[_NotifierEntry] = []
 
 
 def _initialize_registry() -> None:
@@ -31,21 +38,21 @@ def _initialize_registry() -> None:
 
     if config.NTFY_ENABLED:
         from notifiers.ntfy import send as ntfy_send
-        _registry.append(("ntfy", True, ntfy_send))
+        _registry.append(_NotifierEntry("ntfy", is_external=True, send_fn=ntfy_send))
 
     if config.DISCORD_ENABLED:
         from notifiers.discord import send as discord_send
-        _registry.append(("discord", True, discord_send))
+        _registry.append(_NotifierEntry("discord", is_external=True, send_fn=discord_send))
 
     from notifiers.console import send as console_send
-    _registry.append(("console", False, console_send))
+    _registry.append(_NotifierEntry("console", is_external=False, send_fn=console_send))
 
 
 def get_enabled_channels() -> list[str]:
     """Return the list of names of configured notification channels."""
     if not _registry:
         _initialize_registry()
-    return [name for name, _, _ in _registry]
+    return [entry.name for entry in _registry]
 
 
 def dispatch(title: str, message: str, files: list[FileItem]) -> DispatchResult:
@@ -64,16 +71,23 @@ def dispatch(title: str, message: str, files: list[FileItem]) -> DispatchResult:
 
     succeeded: list[str] = []
     failed: list[str] = []
+    external_succeeded: list[str] = []
 
-    for name, _, send_fn in _registry:
+    for entry in _registry:
         try:
-            send_fn(title, message, files)
-            succeeded.append(name)
+            entry.send_fn(title, message, files)
+            succeeded.append(entry.name)
+            if entry.is_external:
+                external_succeeded.append(entry.name)
         except Exception as err:
-            logger.error("Notifier '%s' failed: %s", name, err)
-            failed.append(name)
+            logger.error("Notifier '%s' failed: %s", entry.name, err)
+            failed.append(entry.name)
 
-    return DispatchResult(succeeded=succeeded, failed=failed)
+    return DispatchResult(
+        succeeded=succeeded,
+        failed=failed,
+        external_succeeded=external_succeeded,
+    )
 
 
 def send_test() -> DispatchResult:

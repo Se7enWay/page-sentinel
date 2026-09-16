@@ -117,7 +117,9 @@ def main_loop() -> None:
 
     try:
         while True:
-            cycle_start = time.time()
+            # Drift-compensated sleep: account for processing time
+            # so checks stay evenly spaced regardless of how long each cycle takes
+            next_check = time.monotonic() + config.CHECK_INTERVAL
             time.sleep(config.CHECK_INTERVAL)
 
             check_count += 1
@@ -144,7 +146,8 @@ def main_loop() -> None:
                 title = f"🚨 {count} New Document{'s' if count > 1 else ''} Detected!"
                 message = f"Detected {count} new file(s) posted to the selection index."
 
-                new_file_items = [f for f in result.files if f.filename in new_filenames]
+                new_set = set(new_filenames)
+                new_file_items = [f for f in result.files if f.filename in new_set]
                 dispatch_res = notifiers.dispatch(title, message, new_file_items)
 
                 # Ensure we don't mark files as seen if remote delivery failed
@@ -179,6 +182,11 @@ def main_loop() -> None:
 
                 if check_count % 15 == 0:
                     storage.save_state(state)
+
+            # Drift compensation: sleep only the remaining time to maintain cadence
+            remaining = next_check - time.monotonic()
+            if remaining > 0:
+                time.sleep(remaining)
 
     except KeyboardInterrupt:
         print()

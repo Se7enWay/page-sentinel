@@ -1,36 +1,25 @@
-<![CDATA[# ──────────────────────────────────────────────────────────────
-# .gitignore — Files to exclude from version control
-# ──────────────────────────────────────────────────────────────
-# These files should NEVER be committed to Git because they contain
-# either secrets, temporary data, or system-specific files.
-
-# ── Secrets ──
-# Your .env file contains webhook URLs and private topic names.
-# NEVER commit this. Anyone with your webhook URL can post to your Discord.
+# Secrets
 .env
 
-# ── Runtime State ──
-# The state file is specific to YOUR monitoring session.
-# Other users cloning the repo should start fresh.
+# Runtime state
 state.json
+state.json.bak
 
-# ── Python Cache ──
-# Python creates these automatically to speed up imports.
-# They're machine-specific and should never be committed.
+# Python cache
 __pycache__/
 *.py[cod]
 *$py.class
 *.pyo
+.pytest_cache/
 
-# ── IDE / Editor Files ──
+# IDE / Editor
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# ── OS Files ──
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
-]]>

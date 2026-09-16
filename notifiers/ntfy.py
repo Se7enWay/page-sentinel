@@ -5,9 +5,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-import requests
-
 import config
+from monitor import get_http_session
 
 if TYPE_CHECKING:
     from monitor import FileItem
@@ -27,6 +26,7 @@ def send(title: str, message: str, files: list[FileItem]) -> None:
     if not topic:
         raise ValueError("NTFY_TOPIC is not configured")
 
+    session = get_http_session()
     endpoint = f"{config.NTFY_SERVER}/{topic}"
 
     body_lines = [message]
@@ -49,7 +49,7 @@ def send(title: str, message: str, files: list[FileItem]) -> None:
         headers["Click"] = files[0].url
         headers["Actions"] = f"view, Open Document, {files[0].url}"
 
-    response = requests.post(
+    response = session.post(
         endpoint,
         data=body_content.encode("utf-8"),
         headers=headers,
