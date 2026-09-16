@@ -25,7 +25,7 @@ def test_ntfy_sends_urgent_with_click_url():
         call_kwargs = mock_session.post.call_args[1]
         payload = call_kwargs["json"]
 
-        assert payload["priority"] == 5  # urgent
+        assert payload["priority"] == 4
         assert payload["click"] == "http://fsr.ac.ma/Master_IT.pdf"
         assert payload["title"] == "🚨 New Files!"
         assert "Master_IT.pdf" in payload["message"]

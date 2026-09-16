@@ -44,7 +44,7 @@ def send(title: str, message: str, files: list[FileItem]) -> None:
         "topic": topic,
         "title": title[:100],
         "message": "\n".join(body_lines),
-        "priority": 5,  # urgent
+        "priority": config.NTFY_PRIORITY,
         "tags": ["rotating_light", "file_folder"],
     }
 

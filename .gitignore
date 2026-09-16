@@ -4,6 +4,8 @@
 # Runtime state
 state.json
 state.json.bak
+demo_state.json
+*state*.json
 
 # Python cache
 __pycache__/
