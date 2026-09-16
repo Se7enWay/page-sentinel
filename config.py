@@ -52,5 +52,6 @@ WATCHED_EXTENSIONS: list[str] = [
 ]
 
 # State persistence
-STATE_FILE: Path = Path(os.getenv("STATE_FILE", "state.json"))
+_PROJECT_DIR: Path = Path(__file__).resolve().parent
+STATE_FILE: Path = Path(os.getenv("STATE_FILE", str(_PROJECT_DIR / "state.json")))
 REQUEST_TIMEOUT: int = int(os.getenv("REQUEST_TIMEOUT", "15"))

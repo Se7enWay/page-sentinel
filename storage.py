@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import shutil
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -98,7 +99,7 @@ def save_state(state: dict[str, Any], path: Path | None = None) -> None:
     if target.exists():
         bak_path = target.with_suffix(".json.bak")
         try:
-            target.replace(bak_path)
+            shutil.copy2(target, bak_path)
         except OSError:
             pass
 

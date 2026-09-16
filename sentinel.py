@@ -116,11 +116,10 @@ def main_loop() -> None:
     check_count = state.get("check_count", 0)
 
     try:
+        sleep_duration = float(config.CHECK_INTERVAL)
         while True:
-            # Drift-compensated sleep: account for processing time
-            # so checks stay evenly spaced regardless of how long each cycle takes
-            next_check = time.monotonic() + config.CHECK_INTERVAL
-            time.sleep(config.CHECK_INTERVAL)
+            time.sleep(sleep_duration)
+            cycle_start = time.monotonic()
 
             check_count += 1
             result = monitor.fetch_and_parse(
@@ -183,10 +182,9 @@ def main_loop() -> None:
                 if check_count % 15 == 0:
                     storage.save_state(state)
 
-            # Drift compensation: sleep only the remaining time to maintain cadence
-            remaining = next_check - time.monotonic()
-            if remaining > 0:
-                time.sleep(remaining)
+            # Drift-compensated: next sleep subtracts this cycle's processing time
+            elapsed = time.monotonic() - cycle_start
+            sleep_duration = max(0.0, config.CHECK_INTERVAL - elapsed)
 
     except KeyboardInterrupt:
         print()
